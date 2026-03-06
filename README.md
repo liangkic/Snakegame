@@ -75,6 +75,7 @@ npm.cmd run build
 
 - 推送到 `main` 时：自动执行测试并构建 Windows `.exe`
 - 推送形如 `v1.0.1` 的 tag 时：自动把 `.exe` 上传到对应 GitHub Release
+- 也可以在 GitHub Actions 页面手动触发发布流程，直接输入版本 tag 生成 Release
 
 Actions 页面：
 

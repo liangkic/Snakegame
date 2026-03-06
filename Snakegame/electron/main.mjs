@@ -11,8 +11,10 @@ function createMainWindow() {
     height: 820,
     minWidth: 420,
     minHeight: 560,
+    title: `Snakegame ${app.getVersion()}`,
     backgroundColor: "#f4f4f1",
     autoHideMenuBar: true,
+    icon: path.join(__dirname, "..", "assets", "app-icon.png"),
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false

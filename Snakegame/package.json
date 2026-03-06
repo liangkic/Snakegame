@@ -1,6 +1,8 @@
 {
   "name": "snakegame",
   "version": "1.0.0",
+  "description": "经典贪吃蛇小游戏，支持网页版、Windows 桌面版和自动打包发布。",
+  "author": "liangkic",
   "private": true,
   "type": "module",
   "main": "electron/main.mjs",
@@ -13,7 +15,9 @@
   "build": {
     "appId": "com.codex.snakegame",
     "productName": "Snakegame",
+    "copyright": "Copyright (c) 2026 liangkic",
     "files": [
+      "assets/**/*",
       "electron/**/*",
       "index.html",
       "styles.css",
@@ -23,6 +27,7 @@
       "output": "dist"
     },
     "win": {
+      "icon": "assets/app-icon.ico",
       "target": [
         "portable"
       ],
