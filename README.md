@@ -43,6 +43,11 @@ npm.cmd run build
 
 The packaged executable is written to `Snakegame/dist/`.
 
+## GitHub Actions
+
+Pushes to `main` build the Windows executable automatically and upload it as a workflow artifact.
+Pushing a tag such as `v1.0.1` also publishes the `.exe` to the corresponding GitHub Release.
+
 ## Controls
 
 - Arrow keys or `WASD`: move
