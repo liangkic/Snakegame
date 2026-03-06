@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  createLevelSequence,
   createGameState,
   queueDirection,
   restartGame,
@@ -23,6 +24,12 @@ test("createGameState builds a running game with valid food placement", () => {
   assert.notEqual(state.food, null);
   assert.equal(
     state.snake.some((segment) => segment.x === state.food.x && segment.y === state.food.y),
+    false
+  );
+  assert.equal(state.levelSequence.length, 30);
+  assert.deepEqual(state.levelSequence.slice(0, 6), [0, 1, 2, 3, 4, 5]);
+  assert.equal(
+    state.obstacles.some((obstacle) => obstacle.x === state.food.x && obstacle.y === state.food.y),
     false
   );
 });
@@ -111,6 +118,57 @@ test("stepGame ends the game on self collision", () => {
   assert.equal(nextState.status, "gameover");
 });
 
+test("stepGame ends the game when the snake hits an obstacle", () => {
+  const state = {
+    width: 6,
+    height: 6,
+    snake: [
+      { x: 2, y: 2 },
+      { x: 1, y: 2 },
+      { x: 0, y: 2 }
+    ],
+    direction: "right",
+    nextDirection: "right",
+    food: { x: 5, y: 5 },
+    score: 0,
+    status: "running",
+    obstacles: [{ x: 3, y: 2 }]
+  };
+
+  const nextState = stepGame(state, selectFirstIndex);
+
+  assert.equal(nextState.status, "gameover");
+});
+
+test("stepGame advances to the next level after enough food is collected", () => {
+  const state = {
+    ...createGameState({ width: 20, height: 20 }, selectFirstIndex),
+    snake: [
+      { x: 2, y: 2 },
+      { x: 1, y: 2 },
+      { x: 0, y: 2 }
+    ],
+    direction: "right",
+    nextDirection: "right",
+    food: { x: 3, y: 2 },
+    foodsRemainingInLevel: 1,
+    levelIndex: 0,
+    levelNumber: 1,
+    levelTemplate: 1,
+    levelSequence: [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5],
+    obstacles: []
+  };
+
+  const nextState = stepGame(state, selectFirstIndex);
+
+  assert.equal(nextState.levelIndex, 1);
+  assert.equal(nextState.levelNumber, 2);
+  assert.equal(nextState.levelTemplate, 2);
+  assert.equal(nextState.foodsRemainingInLevel, 3);
+  assert.equal(nextState.score, 1);
+  assert.equal(nextState.snake.length, 3);
+});
+
 test("spawnFood never picks a snake occupied cell", () => {
   const food = spawnFood(
     {
@@ -146,7 +204,15 @@ test("restartGame resets the game state", () => {
     nextDirection: "down",
     food: { x: 7, y: 7 },
     score: 4,
-    status: "paused"
+    status: "paused",
+    totalLevels: 30,
+    foodsPerLevel: 3,
+    foodsRemainingInLevel: 1,
+    levelIndex: 7,
+    levelNumber: 8,
+    levelTemplate: 4,
+    levelSequence: createLevelSequence(30, 6, selectFirstIndex),
+    obstacles: [{ x: 2, y: 2 }]
   };
 
   const restarted = restartGame(runningState, selectFirstIndex);
@@ -155,6 +221,8 @@ test("restartGame resets the game state", () => {
   assert.equal(restarted.score, 0);
   assert.equal(restarted.direction, "right");
   assert.equal(restarted.snake.length, 3);
+  assert.equal(restarted.levelNumber, 1);
+  assert.equal(restarted.foodsRemainingInLevel, 3);
 });
 
 test("togglePause freezes game advancement until resumed", () => {

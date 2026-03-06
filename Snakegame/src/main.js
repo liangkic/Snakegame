@@ -12,13 +12,16 @@ const TICK_MS = 150;
 const boardElement = document.querySelector("#board");
 const scoreElement = document.querySelector("#score");
 const statusElement = document.querySelector("#status");
+const levelElement = document.querySelector("#level");
+const targetElement = document.querySelector("#target");
 const pauseButton = document.querySelector("#pause-button");
 const restartButton = document.querySelector("#restart-button");
 
 const statusLabels = {
   running: "Running",
   paused: "Paused",
-  gameover: "Game Over"
+  gameover: "Game Over",
+  completed: "All Levels Cleared"
 };
 
 const keyToDirection = {
@@ -135,6 +138,10 @@ function render() {
     cellElement.style.removeProperty("--sprite-rotation");
   }
 
+  for (const obstacle of state.obstacles) {
+    cells[indexForCell(obstacle)].classList.add("cell--obstacle");
+  }
+
   for (let index = 0; index < state.snake.length; index += 1) {
     applySnakeSegmentSprite(cells[indexForCell(state.snake[index])], index);
   }
@@ -145,8 +152,10 @@ function render() {
 
   scoreElement.textContent = String(state.score);
   statusElement.textContent = statusLabels[state.status];
+  levelElement.textContent = `${state.levelNumber}/${state.totalLevels}`;
+  targetElement.textContent = String(state.foodsRemainingInLevel);
   pauseButton.textContent = state.status === "paused" ? "Resume" : "Pause";
-  pauseButton.disabled = state.status === "gameover";
+  pauseButton.disabled = state.status === "gameover" || state.status === "completed";
 }
 
 function restart() {

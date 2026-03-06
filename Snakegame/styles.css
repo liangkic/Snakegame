@@ -139,6 +139,10 @@ button:focus-visible {
   background-image: url("./assets/sprites/apple.svg");
 }
 
+.cell--obstacle::before {
+  background-image: url("./assets/sprites/obstacle.svg");
+}
+
 @media (max-width: 640px) {
   .panel {
     padding: 16px;
