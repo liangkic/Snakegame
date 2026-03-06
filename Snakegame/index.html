@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classic Snake</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app">
+    <section class="panel">
+      <div class="panel__header">
+        <div>
+          <p class="eyebrow">Classic Snake</p>
+          <h1>Snake</h1>
+        </div>
+        <div class="stats">
+          <p>Score: <span id="score">0</span></p>
+          <p>Status: <span id="status">Running</span></p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="pause-button" type="button">Pause</button>
+        <button id="restart-button" type="button">Restart</button>
+      </div>
+
+      <p class="hint">Controls: Arrow keys or WASD to move, Space to pause, R to restart.</p>
+      <p id="file-notice" class="hint" hidden>
+        This game must be served from a local server. Run <code>node server.js</code>, then open <code>http://localhost:3000</code>.
+      </p>
+      <div id="board" class="board" aria-label="Snake game board" role="grid"></div>
+    </section>
+  </main>
+
+  <script>
+    const noticeElement = document.querySelector("#file-notice");
+    const isElectron = navigator.userAgent.includes("Electron");
+
+    if (window.location.protocol === "file:" && !isElectron) {
+      noticeElement.hidden = false;
+      document.querySelector("#pause-button").disabled = true;
+      document.querySelector("#restart-button").disabled = true;
+    } else {
+      const scriptElement = document.createElement("script");
+      scriptElement.type = "module";
+      scriptElement.src = "./src/main.js";
+      document.body.appendChild(scriptElement);
+    }
+  </script>
+</body>
+</html>

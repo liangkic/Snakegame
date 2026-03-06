@@ -1,0 +1,36 @@
+{
+  "name": "snakegame",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.mjs",
+  "scripts": {
+    "start": "electron .",
+    "serve": "node server.js",
+    "test": "node --test",
+    "build": "electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.codex.snakegame",
+    "productName": "Snakegame",
+    "files": [
+      "electron/**/*",
+      "index.html",
+      "styles.css",
+      "src/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "artifactName": "Snakegame-${version}.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^37.3.1",
+    "electron-builder": "^26.0.12"
+  }
+}
