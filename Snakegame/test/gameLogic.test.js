@@ -65,7 +65,7 @@ test("stepGame grows the snake and increments score when food is eaten", () => {
   assert.deepEqual(nextState.snake[0], { x: 3, y: 2 });
 });
 
-test("stepGame ends the game on wall collision", () => {
+test("stepGame wraps across the board edge instead of ending the game", () => {
   const state = {
     width: 4,
     height: 4,
@@ -83,7 +83,8 @@ test("stepGame ends the game on wall collision", () => {
 
   const nextState = stepGame(state, selectFirstIndex);
 
-  assert.equal(nextState.status, "gameover");
+  assert.equal(nextState.status, "running");
+  assert.deepEqual(nextState.snake[0], { x: 0, y: 1 });
 });
 
 test("stepGame ends the game on self collision", () => {

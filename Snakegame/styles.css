@@ -103,16 +103,40 @@ button:focus-visible {
 }
 
 .cell {
+  position: relative;
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: #f7f7f2;
 }
 
-.cell--snake {
-  background: #202020;
+.cell::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  transform: rotate(var(--sprite-rotation, 0deg));
 }
 
-.cell--food {
-  background: #d14836;
+.cell--snake-head::before {
+  background-image: url("./assets/sprites/snake-head.svg");
+}
+
+.cell--snake-body::before {
+  background-image: url("./assets/sprites/snake-body.svg");
+}
+
+.cell--snake-turn::before {
+  background-image: url("./assets/sprites/snake-turn.svg");
+}
+
+.cell--snake-tail::before {
+  background-image: url("./assets/sprites/snake-tail.svg");
+}
+
+.cell--food::before {
+  background-image: url("./assets/sprites/apple.svg");
 }
 
 @media (max-width: 640px) {

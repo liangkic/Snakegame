@@ -38,9 +38,78 @@ const keyToDirection = {
 
 let state = createGameState({ width: BOARD_SIZE, height: BOARD_SIZE });
 const cells = [];
+const rotationByDirection = {
+  right: "0deg",
+  down: "90deg",
+  left: "180deg",
+  up: "270deg"
+};
 
 function indexForCell(cell) {
   return cell.y * state.width + cell.x;
+}
+
+function directionBetween(from, to) {
+  if (to.x === (from.x + 1) % state.width && to.y === from.y) {
+    return "right";
+  }
+
+  if (to.x === (from.x - 1 + state.width) % state.width && to.y === from.y) {
+    return "left";
+  }
+
+  if (to.y === (from.y + 1) % state.height && to.x === from.x) {
+    return "down";
+  }
+
+  return "up";
+}
+
+function applySnakeSegmentSprite(cellElement, index) {
+  if (index === 0) {
+    cellElement.classList.add("cell--snake-head");
+    cellElement.style.setProperty("--sprite-rotation", rotationByDirection[state.direction]);
+    return;
+  }
+
+  if (index === state.snake.length - 1) {
+    const tail = state.snake[index];
+    const previous = state.snake[index - 1];
+    const connectionDirection = directionBetween(tail, previous);
+    cellElement.classList.add("cell--snake-tail");
+    cellElement.style.setProperty("--sprite-rotation", rotationByDirection[connectionDirection]);
+    return;
+  }
+
+  const segment = state.snake[index];
+  const previous = state.snake[index - 1];
+  const next = state.snake[index + 1];
+  const directionToPrevious = directionBetween(segment, previous);
+  const directionToNext = directionBetween(segment, next);
+  const directions = [directionToPrevious, directionToNext];
+
+  if (
+    (directions.includes("left") && directions.includes("right")) ||
+    (directions.includes("up") && directions.includes("down"))
+  ) {
+    cellElement.classList.add("cell--snake-body");
+    cellElement.style.setProperty(
+      "--sprite-rotation",
+      directions.includes("left") ? "0deg" : "90deg"
+    );
+    return;
+  }
+
+  const turnKey = [directionToPrevious, directionToNext].sort().join("-");
+  const turnRotations = {
+    "right-up": "0deg",
+    "down-right": "90deg",
+    "down-left": "180deg",
+    "left-up": "270deg"
+  };
+
+  cellElement.classList.add("cell--snake-turn");
+  cellElement.style.setProperty("--sprite-rotation", turnRotations[turnKey]);
 }
 
 function createBoard() {
@@ -63,10 +132,11 @@ function createBoard() {
 function render() {
   for (const cellElement of cells) {
     cellElement.className = "cell";
+    cellElement.style.removeProperty("--sprite-rotation");
   }
 
-  for (const segment of state.snake) {
-    cells[indexForCell(segment)].classList.add("cell--snake");
+  for (let index = 0; index < state.snake.length; index += 1) {
+    applySnakeSegmentSprite(cells[indexForCell(state.snake[index])], index);
   }
 
   if (state.food !== null) {

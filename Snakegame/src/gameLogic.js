@@ -20,8 +20,12 @@ function cloneCell(cell) {
   return { x: cell.x, y: cell.y };
 }
 
-function cellsEqual(a, b) {
+export function cellsEqual(a, b) {
   return a.x === b.x && a.y === b.y;
+}
+
+function wrapCoordinate(value, limit) {
+  return (value + limit) % limit;
 }
 
 function createInitialSnake(width, height) {
@@ -124,24 +128,9 @@ export function stepGame(state, selectIndex = defaultSelectIndex) {
   const direction = state.nextDirection ?? state.direction;
   const vector = DIRECTION_VECTORS[direction];
   const nextHead = {
-    x: state.snake[0].x + vector.x,
-    y: state.snake[0].y + vector.y
+    x: wrapCoordinate(state.snake[0].x + vector.x, state.width),
+    y: wrapCoordinate(state.snake[0].y + vector.y, state.height)
   };
-
-  const outOfBounds =
-    nextHead.x < 0 ||
-    nextHead.y < 0 ||
-    nextHead.x >= state.width ||
-    nextHead.y >= state.height;
-
-  if (outOfBounds) {
-    return {
-      ...state,
-      direction,
-      nextDirection: direction,
-      status: "gameover"
-    };
-  }
 
   const willEat = state.food !== null && cellsEqual(nextHead, state.food);
   const movedSnake = [nextHead, ...state.snake.map(cloneCell)];
